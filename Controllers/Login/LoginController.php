@@ -13,8 +13,12 @@ include_once "./Models/Usuario.php";
                 $stmt = $MysqlPDO->prepare($query);
         
                 $stmt->execute();
-                $row = $stmt->fetchAll(PDO::FETCH_CLASS, "Usuario");
-                return $row;
+                $row = $stmt->fetch();
+
+                if($stmt->rowCount() <= 0)
+                    return "DEU RUIM";
+
+                return new Usuario($row[0],$row[1],$row[2],$row[3], $row[4], $row[5], $row[6], $row[7]);
 
             } catch(Exception $ex){
                     echo $ex->getMessage();

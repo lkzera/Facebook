@@ -1,7 +1,8 @@
 <?php
 include_once "./Controllers/Login/LoginController.php";
+
 $controler = new LoginController();
-$resultado = $controler->ValidaLogin('2','3');
+$resultado = $controler->ValidaLogin('2', '3');
 ?>
 
 <!DOCTYPE HTML>
@@ -11,20 +12,28 @@ $resultado = $controler->ValidaLogin('2','3');
 <head>
     <meta charset="UTF-8">
     <title>teste</title>
-    <link rel="stylesheet" type="text/css" href="libs/css/custom2.css">
-
-    <!-- Latest compiled and minified Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-
-    <!-- our custom CSS -->
-    <link rel="stylesheet" href="libs/css/custom.css" />
-
+    <link rel="stylesheet" href="./Css/login.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
     <header>
-        <h1><?php echo $resultado[0]; ?></h1>
+        <h1></h1>
     </header>
+
+    <div class="container-fluid">
+        <div class="row justify-content-md-center">
+            <div class="col-md-6">
+                <div class="content">
+                    <div class="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

@@ -10,6 +10,19 @@
         private $descricao;
         private $dataAniversario;
         private $dataInclusao;
+
+        public function __construct($id_usuario, $login, $nome, $email, $senha, $descricao, $dataAniversario, $dataInclusao)
+        {
+                $this->id_usuario = $id_usuario;
+                $this->login = $login;
+                $this->nome = $nome;
+                $this->email = $email;
+                $this->senha = $senha;
+                $this->descricao = $descricao;
+                $this->dataAniversario = $dataAniversario;
+                $this->dataInclusao = $dataInclusao;
+        }
+
         /**
          * Get the value of id_usuario
          */ 
