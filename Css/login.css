@@ -1,7 +1,16 @@
-.content{
-    width: 500px;
-    min-height: 560px;    
-    margin: 0px auto;
-    position: relative;   
-    background-color: aqua;
-  }
+.navbar-default{
+  background-color: cornflowerblue;
+
+}
+.texto{
+  margin-left: auto;
+  color: aliceblue;
+}
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+
+}

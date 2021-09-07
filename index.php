@@ -1,8 +1,6 @@
 <?php
 include_once "./Controllers/Login/LoginController.php";
 
-$controler = new LoginController();
-$resultado = $controler->ValidaLogin('2', '3');
 ?>
 
 <!DOCTYPE HTML>
@@ -20,19 +18,28 @@ $resultado = $controler->ValidaLogin('2', '3');
 
 <body>
     <header>
-        <h1></h1>
+        <nav class="navbar navbar-default">
+            <a class="navbar-brand texto" href="#">Facebook</a>
+        </nav>
     </header>
 
-    <div class="container-fluid">
-        <div class="row justify-content-md-center">
-            <div class="col-md-6">
-                <div class="content">
-                    <div class="">
-                    </div>
+    <section>
+        <div class="container center">
+            <form action="executa_login.php" method="POST" role="form">
+                <legend>Facebook - Login</legend>
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <br>
+                    <input type="text" class="form-control" id="login" name="login" placeholder="Informe o Login">
+                    <label for="senha">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Informe a senha">
                 </div>
-            </div>
+                <br>
+
+                <button type="submit" class="btn btn-primary">OK</button>
+            </form>
         </div>
-    </div>
+    </section>
 
 </body>
 
