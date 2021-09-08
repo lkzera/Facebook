@@ -1,7 +1,4 @@
-<?php
-include_once "./Controllers/Login/LoginController.php";
 
-?>
 
 <!DOCTYPE HTML>
 
@@ -25,7 +22,7 @@ include_once "./Controllers/Login/LoginController.php";
 
     <section>
         <div class="container center">
-            <form action="executa_login.php" method="POST" role="form">
+            <form action="LoginController.php" method="POST" role="form">
                 <legend>Facebook - Login</legend>
                 <div class="form-group">
                     <label for="login">Login</label>
