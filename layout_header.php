@@ -21,7 +21,7 @@
         }
 
         if (isset($_SESSION["nome_usuario"])) {
-            $name = substr($_SESSION["nome_usuario"],0 , 10);
+            $name = substr($_SESSION["nome_usuario"], 0, 10);
         } else {
             Header("Location: login.php");
             exit;
@@ -35,19 +35,18 @@
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
-                
-            </div>
-            <div class="collapse navbar-collapse navbar-right" >
-                    <ul class="navbar-nav navbar-right">
-                        <li class="nav-item">
-                            <h6 class="fs-6 text-center"><?php echo $name; ?></h6>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Sair</a>
-                        </li>
-                    </ul>
-                </div>
 
+            </div>
+            <div class="collapse navbar-collapse navbar-right">
+                <ul class="navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <h6 class="fs-6 text-center"><?php echo $name; ?></h6>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">Sair</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
     </header>
