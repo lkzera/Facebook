@@ -1,8 +1,9 @@
 
-<footer>
-    <h6>Olas</h6>
-</footer>
-
+</div>
+<div class="row rodape">
+    <p>Facebook - UCS</p>
+</div>
+</div>
+</div>
 </body>
-
 </html>
