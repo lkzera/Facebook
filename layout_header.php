@@ -6,9 +6,12 @@
     <meta charset="UTF-8">
     <title>Facebook</title>
     <link rel="stylesheet" href="./Assets/Css/header.css" type="text/css" />
+    <link rel="stylesheet"href="./Assets/Css/newPost.css" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
@@ -40,7 +43,7 @@
             <div class="collapse navbar-collapse navbar-right">
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item">
-                        <h6 class="fs-6 text-center"><?php echo $name; ?></h6>
+                        <a id="modalUser" class="nav-link" href="dados_usuario.php"><?php echo $name; ?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">Sair</a>

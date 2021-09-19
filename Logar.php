@@ -5,7 +5,7 @@ include_once './Models/Usuario.php';
 
 session_start();
 $login = isset($_POST["login"]) ? addslashes(trim($_POST["login"])) : FALSE; 
-$senha = isset($_POST["senha"]) ? addslashes(trim($_POST["senha"])) : FALSE; 
+$senha = isset($_POST["senha"]) ? md5(trim($_POST["senha"])) : FALSE; 
 
 if(!$login || !$senha) 
 { 
@@ -16,8 +16,8 @@ if(!$login || !$senha)
 }  
 
 $user = new UserRepository();
-$usuario = $user->find($login);
-var_dump($usuario);
+$usuario = $user->find(array("login" => $login));
+
 
 $problemas = FALSE;
 if($usuario) {
