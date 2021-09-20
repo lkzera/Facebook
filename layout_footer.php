@@ -4,8 +4,6 @@
     <p>Facebook - UCS</p>
 </div>
 </div>
-</div>
-
 
 </body>
 </html>

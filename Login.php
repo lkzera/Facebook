@@ -1,3 +1,11 @@
+<?php
+include_once 'sessionControl.php';
+
+if (is_session_started() === FALSE) {
+            session_start();
+        }
+
+?>
 <!DOCTYPE HTML>
 
 <html lang=pt-br>
@@ -103,7 +111,7 @@
                     async: true,
                     data: dados,
                     success: function(response) {
-                        window.location.replace("index.php");
+                        window.location.replace("login.php");
                     },
                     error: function(error) {
                         alert('deu ruim irmão');
