@@ -1,0 +1,12 @@
+O já foi feito:
+
+Criação do banco de dados
+Comunicação do php com o mysql --dar uma olhada como fiz a macacada ali
+Login 
+Controle de sessão
+crud usuário
+Página de post
+
+O que precisa ser feito:
+Implementar página de posts
+implementar página de solicitação de usuários
