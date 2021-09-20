@@ -31,15 +31,14 @@ class UserRepository implements IMysqlRepository
     public function find($params)
     {
         $query = "select * from tb_usuarios where 1 = 1";
-        foreach ($params as $key => $value) {
-            $query = $query.' and '.$key.' = :'.$key; 
+        foreach ($params as $key => &$value) {
+            $query = $query . ' and ' . $key . ' = :' . $key;
         }
 
         $stmt = $this->mysqlDB->prepare($query);
 
-        foreach ($params as $key => $value) {
-            $stmt->bindParam(':'.$key, $value);
-            echo ':'.$key.' '.$value;
+        foreach ($params as $key => &$value) {
+            $stmt->bindParam(':' . $key, $value);
         }
 
         $stmt->execute();
@@ -75,24 +74,27 @@ class UserRepository implements IMysqlRepository
 
     public function update($params, $id)
     {
-        $query = "update tb_usuarios set ";
-        foreach ($params as $key => $value) {
-            $query = $query.' '.$key.' = :'.$key.','; 
+        try {
+            $query = "update tb_usuarios set ";
+            foreach ($params as $key => &$value) {
+                $query = $query . ' ' . $key . ' = :' . $key . ',';
+            }
+            $query = rtrim($query, ",");
+
+            $query = $query . ' where id_usuario = ' . $id;
+            $stmt = $this->mysqlDB->prepare($query);
+
+            //& tem que passar por ref 
+            foreach ($params as $key => &$value) {
+                $stmt->bindParam(':'.$key, $value);
+            }
+
+            $stmt->execute();
+            if($stmt->rowCount() <= 0 )
+                return false;
+            return true;
+        } catch (Exception $ex) {
+            return false;
         }
-        rtrim($query, ", ");
-
-        $query = $query.' where id_usuario = '.$id;
-
-        var_dump($query);
-        exit;
-
-        $stmt = $this->mysqlDB->prepare($query);
-
-        foreach ($params as $key => $value) {
-            $stmt->bindParam(':'.$key, $value);
-            echo ':'.$key.' '.$value;
-        }
-
-        $stmt->execute();
     }
 }

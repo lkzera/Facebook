@@ -5,13 +5,9 @@ include_once "layout_lateral.php";
 include_once './Db/User/UserRepository.php';
 include_once './Models/Usuario.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 $user = new UserRepository();
 $usuario = $user->findId($_SESSION["id_usuario"]);
-
 ?>
 
 <div class="col-md-10 p-2">
@@ -37,7 +33,7 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                     </div>
                     <div class="form-group">
                         <label for="descricao">Descrição</label>
-                        <textarea class="form-control" id="inputDadosdescricao" name="descricao" rows="3"></textarea>
+                        <textarea class="form-control" id="inputDadosdescricao" name="descricao" rows="3" ><?php echo $usuario->getDescricao()?></textarea>
                     </div>
 
                     <div class="form-group">
@@ -45,14 +41,14 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-outline">
-                                    <input type="number" id="inputDadosDia" class="form-control" name="dia" placeholder="Dia" />
+                                    <input type="number" id="inputDadosDia" class="form-control" name="dia" placeholder="Dia" value="<?php echo Date('d',strtotime($usuario->getDataAniversario())) ?>" />
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" id="inputDadosMes" class="form-control" name="mes" placeholder="Mês" />
+                                <input type="number" id="inputDadosMes" class="form-control" name="mes" placeholder="Mês" value="<?php echo Date('m',strtotime($usuario->getDataAniversario())) ?>"/>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" id="inputDadosAno" class="form-control" name="ano" placeholder="Ano" />
+                                <input type="number" id="inputDadosAno" class="form-control" name="ano" placeholder="Ano" value="<?php echo Date('Y',strtotime($usuario->getDataAniversario())) ?>" />
                             </div>
                         </div>
                     </div>
@@ -84,8 +80,8 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
             var login = $('#inputDadosLogin').val();
             var email = $('#inputDadosEmail').val();
             var senha = $('#inputDadosSenha').val();
-            var descricao = $('#inputDadosDescricao').val();
-            var dataA = new Date($('#inputDadosAno').val(),$('#inputDadosMes').val(),$('#inputDadosDia').val());
+            var descricao = $('#inputDadosdescricao').val();
+            var dataA = $('#inputDadosAno').val() + '/' + $('#inputDadosMes').val() + '/' + $('#inputDadosDia').val();
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
