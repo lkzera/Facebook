@@ -12,10 +12,10 @@ include_once "layout_lateral.php";
             <div class="col-md-offset-3 col-md-6 col-xs-12 mx-auto">
                 <div class="well well-sm well-social-post">
                     <form>
-                        <textarea class="form-control" placeholder="Diga o que está pensando.."></textarea>
+                        <textarea class="form-control" id="postText" placeholder="Diga o que está pensando.."></textarea>
                         <ul class='list-inline post-actions'>
                             <li><a href="#"><span class="glyphicon glyphicon-camera">Foto</span></a></li>
-                            <li class='pull-right'><a href="#" class='btn btn-primary btn-xs'>Post</a></li>
+                            <button class="btn btn-primary" type="button" id="btnPostagem">Postar</button>
                         </ul>
                     </form>
                 </div>
@@ -116,6 +116,30 @@ include_once "layout_lateral.php";
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $("#btnPostagem").on('click', function() {
+            var texto = $('#postText').val();
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'postar.php',
+                async: true,
+                data: {
+                    post_text: texto
+                },
+                success: function(response) {
+                    alert(response.message);
+                    window.location.replace("index.php");
+                },
+                error: function(response) {
+                    alert(response.message);
+                }
+            })
+        });
+    });
+</script>
 
 <?php
 // layout do rodapé

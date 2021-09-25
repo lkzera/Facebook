@@ -97,10 +97,11 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                     aniversario: dataA
                 },
                 success: function(response) {
-                    
+                    alert(response.message);
+                    window.location.replace("index.php");
                 },
                 error: function(response) {
-                   
+                    alert(response.message);
                 }
             })
         });
