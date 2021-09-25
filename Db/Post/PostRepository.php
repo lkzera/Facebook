@@ -23,7 +23,8 @@ class PostRepository implements IMysqlRepository
         $result = [];
 
         foreach($row as $linha){
-            $result += new Post($linha['id_postagem'],$linha['dataPostagem'], $linha['texto']);
+            $retorno = new Post($linha['id_postagem'],$linha['dataPostagem'], $linha['texto']);
+            $result = $retorno;
         }
 
         return $result;

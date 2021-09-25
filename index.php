@@ -25,100 +25,14 @@ include_once "layout_lateral.php";
     <!-- New post aqui -->
 
     <div class="container-fluid posts-content">
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                <!-- Todos os potst aqui abaixos -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="media mb-3">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="d-block ui-w-40 rounded-circle" alt="">
-                            <div class="media-body ml-3">
-                                Usuário Teste
-                                <div class="text-muted small">1 Minuto Atrás</div>
-                            </div>
-                        </div>
 
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus finibus commodo bibendum. Vivamus laoreet blandit odio, vel finibus quam dictum ut.
-                        </p>
-                        <a href="post.php" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <strong>123</strong> Curtidas</small>
-                            </div>
-                            <div class="col-md-8">
-                                <strong>12</strong> Comentários</small>
-                                <strong>1</strong> Compartilhamentos</small>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mx-auto">
-                                <a href="javascript:void(0)" class="d-inline-block text-muted">
-                                    <strong>Curtir</strong>
-                                </a>
-                                <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                    <strong>Comentar</strong>
-                                </a>
-                                <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                    <strong>Compartilhar</strong>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="media mb-3">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="d-block ui-w-40 rounded-circle" alt="">
-                            <div class="media-body ml-3">
-                                Usuário Teste
-                                <div class="text-muted small">1 Minuto Atrás</div>
-                            </div>
-                        </div>
-
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus finibus commodo bibendum. Vivamus laoreet blandit odio, vel finibus quam dictum ut.
-                        </p>
-                        <a href="javascript:void(0)" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <strong>123</strong> Curtidas</small>
-                            </div>
-                            <div class="col-md-8">
-                                <strong>12</strong> Comentários</small>
-                                <strong>1</strong> Compartilhamentos</small>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mx-auto">
-                                <a href="javascript:void(0)" class="d-inline-block text-muted">
-                                    <strong>Curtir</strong>
-                                </a>
-                                <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                    <strong>Comentar</strong>
-                                </a>
-                                <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">
-                                    <strong>Compartilhar</strong>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function() {
+        loadDataPosts();
+
         $("#btnPostagem").on('click', function() {
             var texto = $('#postText').val();
             $.ajax({
@@ -139,6 +53,23 @@ include_once "layout_lateral.php";
             })
         });
     });
+
+    function loadDataPosts() {
+        
+        $.ajax({
+            type: 'GET',
+            dataType: 'html',
+            url: 'lista_postagens.php',
+            async: true,
+            success: function(response) {
+               console.log('ola');
+            },
+            error: function(response) {
+                alert(response.message);
+            }
+        });
+
+    }
 </script>
 
 <?php
