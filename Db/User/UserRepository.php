@@ -43,7 +43,13 @@ class UserRepository implements IMysqlRepository
 
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao']);
+        $result = [];
+        if ($stmt->rowCount() > 0) {
+            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao']);
+        }
+
+        return $result;
+        //
     }
 
     public function insert($object)
@@ -86,15 +92,32 @@ class UserRepository implements IMysqlRepository
 
             //& tem que passar por ref 
             foreach ($params as $key => &$value) {
-                $stmt->bindParam(':'.$key, $value);
+                $stmt->bindParam(':' . $key, $value);
             }
 
             $stmt->execute();
-            if($stmt->rowCount() <= 0 )
+            if ($stmt->rowCount() <= 0)
                 return false;
             return true;
         } catch (Exception $ex) {
             return false;
         }
+    }
+
+    public function SearchUsers($name,$id){
+        $query = "select u.id_usuario, u.nome, a.id_solicitacao, a.dataSolicitacao, a.dataAceite, a.dataBloqueio from tb_usuarios u left join tb_amizade a on a.usuario_id = u.id_usuario where u.nome like upper('%admin%') and u.id_usuario <> 5";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':nome', '%' . $name . '%');
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        return $result[] = (object)[
+            "id_postagem" => $row[0]['id_postagem'],
+            "dataPostagem" => $row[0]['dataPostagem'],
+            "texto" => $row[0]['texto'],
+            "id_usuario" => $row[0]['id_usuario'],
+            "nome_usuario" => $row[0]["nome"]
+        ];
     }
 }

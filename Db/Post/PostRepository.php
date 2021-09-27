@@ -16,7 +16,7 @@ class PostRepository implements IMysqlRepository
 
     public function findAll()
     {
-        $query = "select * from tb_postagem;";
+        $query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario order by p.dataPostagem desc";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -27,7 +27,9 @@ class PostRepository implements IMysqlRepository
             $result[] = (object)[
                "id_postagem" => $linha['id_postagem'],
                "dataPostagem" => $linha['dataPostagem'],
-               "texto" => $linha['texto']
+               "texto" => $linha['texto'],
+               "id_usuario" => $linha['id_usuario'],
+               "nome_usuario" => $linha["nome"]
             ];
         }
 
@@ -37,12 +39,19 @@ class PostRepository implements IMysqlRepository
 
     public function findId($id)
     {
-        $query = "select * from tb_postagem where id_postagem = :id";
+        $query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario where p.id_postagem = :id";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return new Post($row[0]['id_postagem'],$row[0]['dataPostagem'], $row[0]['texto']);
+        $result = [];
+        return $result[] = (object)[
+            "id_postagem" => $row[0]['id_postagem'],
+            "dataPostagem" => $row[0]['dataPostagem'],
+            "texto" => $row[0]['texto'],
+            "id_usuario" => $row[0]['id_usuario'],
+            "nome_usuario" => $row[0]["nome"]
+        ];
     }
 
     public function find($params)
@@ -60,16 +69,23 @@ class PostRepository implements IMysqlRepository
 
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return new Post($row[0]['id_postagem'],$row[0]['dataPostagem'], $row[0]['texto']);
+        $result = [];
+        return $result[] = (object)[
+            $row[0]['id_postagem'],
+            $row[0]['dataPostagem'],
+            $row[0]['texto'],
+            $row[0]['id_usuario']
+        ];
     }
 
     public function insert($object)
     {
         try {
-            $query = "insert into tb_postagem(dataPostagem, texto) VALUES (sysdate(), :texto)";
+            $query = "insert into tb_postagem(dataPostagem, texto, id_usuario) VALUES (sysdate(), :texto, :id_usuario)";
 
             $stmt = $this->mysqlDB->prepare($query);
             $stmt->bindParam(':texto', $object->getTexto());
+            $stmt->bindParam(':id_usuario', $object->getId_usuario());
 
             $stmt->execute();
         } catch (Exception $th) {
@@ -83,6 +99,12 @@ class PostRepository implements IMysqlRepository
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
+
+        if ($stmt->rowCount() > 0){
+            return true;
+        }
+        
+        return false;
     }
 
     public function update($params, $id)

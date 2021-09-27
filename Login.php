@@ -114,7 +114,7 @@ if (is_session_started() === FALSE) {
                         window.location.replace("login.php");
                     },
                     error: function(error) {
-                        alert('deu ruim irmão');
+                        alert(error.message);
                     }
                 })
             });

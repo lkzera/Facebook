@@ -62,7 +62,7 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                     <div class="form-group">
                         <button class="btn btn-primary" type="button" id="btnSalvar">Salvar</button>
                         <button class="btn btn-danger" type="button" id="btnApagar">Apagar Conta</button>
-                        <button class="btn btn-secondary" type="button">Voltar</button>
+                        <button class="btn btn-secondary" type="button" id="btnVoltar">Voltar</button>
                     </div>
                 </form>
             </div>
@@ -124,6 +124,11 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                     alert(response.message);
                 }
             })
+        });
+
+        $("#btnVoltar").on('click', function(){
+          window.location.replace("index.php");   
+
         });
 
     });

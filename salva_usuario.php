@@ -39,6 +39,7 @@ if (!is_null($id_usuario)) {
         $erro = !$user->update($params, $id_usuario);
 
         if (!$erro) {
+            session_start();
             $_SESSION["nome_usuario"] = $nome;
             $response = ['success' => true, 'message' => 'Usuário alterado com sucesso.'];
             echo json_encode($response);

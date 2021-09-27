@@ -4,11 +4,13 @@
         private $id_postagem;
         private $data_postagem;
         private $texto;
+        private $id_usuario;
 
-        public function __construct($id_postagem, $data_postagem, $texto){
+        public function __construct($id_postagem, $data_postagem, $texto, $id_usuario){
             $this->id_postagem = $id_postagem;
             $this->data_postagem = $data_postagem;
             $this->texto = $texto;
+            $this->id_usuario = $id_usuario;
         }
 
         /**
@@ -67,6 +69,26 @@
         public function setTexto($texto)
         {
                 $this->texto = $texto;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of id_usuario
+         */ 
+        public function getId_usuario()
+        {
+                return $this->id_usuario;
+        }
+
+        /**
+         * Set the value of id_usuario
+         *
+         * @return  self
+         */ 
+        public function setId_usuario($id_usuario)
+        {
+                $this->id_usuario = $id_usuario;
 
                 return $this;
         }
