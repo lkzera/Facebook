@@ -142,7 +142,7 @@ include_once "layout_lateral.php";
             dados += '                 <p>'
             dados += `${posts[item].texto}`;
             dados += '                 </p>'
-            dados += `                 <a href="post.php" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>`
+            dados += `                 <a href="#" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>`
             dados += '             </div>'
             dados += '             <div class="card-footer">'
             dados += '                 <div class="row">'

@@ -7,6 +7,7 @@
     <title>Facebook</title>
     <link rel="stylesheet" href="./Assets/Css/header.css" type="text/css" />
     <link rel="stylesheet"href="./Assets/Css/newPost.css" type="text/css" />
+    <link rel="stylesheet"href="./Assets/Css/listUsers.css" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -33,9 +34,9 @@
 
         <nav class="navbar navbar-expand-lg navbar-default">
             <div class="container-fluid">
-                <form class="d-flex">
+                <form class="d-flex" method="GET" action="search.php">
                     <a class="navbar-brand">Facebook</a>
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="nome">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
 

@@ -104,20 +104,55 @@ class UserRepository implements IMysqlRepository
         }
     }
 
-    public function SearchUsers($name,$id){
-        $query = "select u.id_usuario, u.nome, a.id_solicitacao, a.dataSolicitacao, a.dataAceite, a.dataBloqueio from tb_usuarios u left join tb_amizade a on a.usuario_id = u.id_usuario where u.nome like upper('%admin%') and u.id_usuario <> 5";
+    public function SearchUsers($name, $id){
+        $query = "SELECT
+        u.id_usuario,
+        u.nome,
+        u.descricao,
+            nvl((
+            SELECT
+                1
+            FROM
+                tb_amizade ta
+            WHERE
+                ta.usuario_id = :id AND ta.amigo_id = u.id_usuario
+                and ta.dataAceite is null 
+                and ta.dataSolicitacao is not null
+        ),0) AS sol_pend,
+         nvl((
+            SELECT
+                1
+            FROM
+                tb_amizade ta
+            WHERE
+                ta.usuario_id = :id AND ta.amigo_id = u.id_usuario
+                and ta.dataAceite is not null 
+        ),0) AS amigo
+        
+        FROM
+            tb_usuarios u
+        WHERE
+            u.id_usuario <> :id
+            and u.nome like :nome
+            ";
+            
+       // $query = "select * from tb_usuarios t where t.nome like :nome";
         $stmt = $this->mysqlDB->prepare($query);
+        $param = $name . "%";
+        $stmt->bindParam(':nome', $param);
         $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':nome', '%' . $name . '%');
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
-        return $result[] = (object)[
-            "id_postagem" => $row[0]['id_postagem'],
-            "dataPostagem" => $row[0]['dataPostagem'],
-            "texto" => $row[0]['texto'],
-            "id_usuario" => $row[0]['id_usuario'],
-            "nome_usuario" => $row[0]["nome"]
-        ];
+        foreach($row as $linha){
+            $result[] = (object)[
+                "nome" => $linha['nome'],
+                "id_usuario" => $linha['id_usuario'],
+                "descricao" => $linha['descricao'],
+                "sol_pend" => $linha['sol_pend'],
+                "amigo" => $linha['amigo']
+            ];
+        }
+        return $result;
     }
 }

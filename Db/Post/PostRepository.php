@@ -132,4 +132,48 @@ class PostRepository implements IMysqlRepository
             return false;
         }
     }
+
+    public function findPostsFriends($id){
+        //$query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario order by p.dataPostagem desc";
+        $query = "
+SELECT
+    p.id_postagem,
+    p.dataPostagem,
+    p.texto,
+    u.id_usuario,
+    u.nome
+FROM
+    tb_postagem p
+    inner join tb_usuarios u on p.id_usuario = u.id_usuario
+WHERE
+    p.id_usuario IN(
+        :id,
+        (
+        SELECT
+            a.amigo_id
+        FROM
+            tb_amizade a
+        WHERE
+            a.usuario_id = :id AND a.dataAceite IS NOT NULL AND a.dataBloqueio IS NULL
+    )
+    )";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+
+        foreach($row as $linha){
+            
+            $result[] = (object)[
+               "id_postagem" => $linha['id_postagem'],
+               "dataPostagem" => $linha['dataPostagem'],
+               "texto" => $linha['texto'],
+               "id_usuario" => $linha['id_usuario'],
+               "nome_usuario" => $linha["nome"]
+            ];
+        }
+
+        return $result;
+    }
 }
