@@ -136,27 +136,32 @@ class PostRepository implements IMysqlRepository
     public function findPostsFriends($id){
         //$query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario order by p.dataPostagem desc";
         $query = "
-SELECT
-    p.id_postagem,
-    p.dataPostagem,
-    p.texto,
-    u.id_usuario,
-    u.nome
-FROM
-    tb_postagem p
-    inner join tb_usuarios u on p.id_usuario = u.id_usuario
-WHERE
-    p.id_usuario IN(
-        :id,
-        (
+    SELECT
+        p.id_postagem,
+        p.dataPostagem,
+        p.texto,
+        u.id_usuario,
+        u.nome
+    FROM
+        tb_postagem p
+    INNER JOIN tb_usuarios u ON
+        p.id_usuario = u.id_usuario
+    WHERE
+        p.id_usuario IN(
+            (
+            SELECT
+                a.amigo_id AS amigo_id
+            FROM
+                tb_amizade a
+            WHERE
+                a.usuario_id = :id AND a.dataAceite IS NOT NULL AND a.dataBloqueio IS NULL
+            UNION ALL
         SELECT
-            a.amigo_id
-        FROM
-            tb_amizade a
-        WHERE
-            a.usuario_id = :id AND a.dataAceite IS NOT NULL AND a.dataBloqueio IS NULL
-    )
-    )";
+            :id AS amigo_id
+        FROM DUAL
+        )
+    ) order by dataPostagem desc
+    ";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();

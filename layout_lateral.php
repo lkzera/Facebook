@@ -9,5 +9,8 @@ $name = substr($_SESSION["nome_usuario"], 0, 10);
           <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
           <span class="p-1"><?php echo $name; ?></span>
         </a>
+        <a href="lista_solicitacoes.php" class="d-flex align-items-center text-white text-decoration-none">
+          <span class="p-1">Solicitações</span>
+        </a>
       </div>
     </div>

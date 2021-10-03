@@ -155,4 +155,137 @@ class UserRepository implements IMysqlRepository
         }
         return $result;
     }
+
+    public function GetFriendsPend($id){
+        $query = "SELECT
+        u.id_usuario,
+        u.nome,
+        u.descricao,
+        a.amigo_id
+    FROM
+        tb_amizade a
+    INNER JOIN tb_usuarios u ON
+        u.id_usuario = a.usuario_id
+    WHERE
+        amigo_id = :id AND a.dataSolicitacao IS NOT NULL AND a.dataAceite IS NULL
+            ";
+            
+       // $query = "select * from tb_usuarios t where t.nome like :nome";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        foreach($row as $linha){
+            $result[] = (object)[
+                "nome" => $linha['nome'],
+                "id_usuario" => $linha['id_usuario'],
+                "descricao" => $linha['descricao'],
+                "amigo_id" => $linha['amigo_id']
+            ];
+        }
+        return $result;
+    }
+
+    public function AcceptInvite($id_origem, $id_destino){
+        try {
+            $query = "
+            INSERT INTO tb_amizade(
+                usuario_id,
+                amigo_id,
+                dataSolicitacao,
+                dataAceite
+            )
+            VALUES(
+                :id_usuario,
+                :amigo_id,
+                SYSDATE(), 
+                SYSDATE()
+            )";
+
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_usuario', $id_origem);
+            $stmt->bindParam(':amigo_id', $id_destino);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
+
+        try {
+            $query = "
+        UPDATE
+            tb_amizade a
+        SET
+            a.dataAceite = SYSDATE()
+        WHERE
+            a.amigo_id = :amigo_id AND a.usuario_id = :id_origem";
+
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_origem', $id_destino);
+            $stmt->bindParam(':amigo_id', $id_origem);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
+    }
+    public function InviteUser($id_origem, $id_destino){
+        try {
+            $query = "
+            INSERT INTO tb_amizade(
+                usuario_id,
+                amigo_id,
+                dataSolicitacao
+            )
+            VALUES(
+                :id_usuario,
+                :amigo_id,
+                SYSDATE()
+            )";
+
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_usuario', $id_origem);
+            $stmt->bindParam(':amigo_id', $id_destino);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
+    }
+
+    public function UndoUser($id_origem, $id_destino){
+        try {
+            $query = "
+            DELETE
+            aa.*
+        FROM
+            tb_amizade aa
+        WHERE
+            aa.id_solicitacao IN(
+            SELECT
+                id_solicitacao
+            FROM
+                (
+                SELECT
+                    a.id_solicitacao
+                FROM
+                    tb_amizade a
+                WHERE
+                    a.usuario_id = :id_origem AND a.amigo_id = :id_destino AND a.dataAceite IS NOT NULL
+                UNION ALL
+            SELECT
+                a.id_solicitacao
+            FROM
+                tb_amizade a
+            WHERE
+                a.usuario_id = :id_destino AND a.amigo_id = :id_origem AND a.dataAceite IS NOT NULL
+            ) X
+        )";
+
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_origem', $id_origem);
+            $stmt->bindParam(':id_destino', $id_destino);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
+    }
 }
