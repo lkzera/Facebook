@@ -19,20 +19,25 @@
     <header>
         <?php
         include_once "sessionControl.php";
+        include_once './Db/User/UserRepository.php';
+        include_once './Models/Usuario.php';
 
         if (is_session_started() === FALSE) {
             session_start();
         }
 
         if (isset($_SESSION["nome_usuario"])) {
+            $_userRepository = new UserRepository();
             $name = substr($_SESSION["nome_usuario"], 0, 10);
+            $idUser = $_SESSION["id_usuario"];
+            $total = $_userRepository->GetNumberSolPed($idUser);
         } else {
             Header("Location: login.php");
             exit;
         }
         ?>
 
-        <nav class="navbar navbar-expand-lg navbar-default">
+        <nav id="navPri" class="navbar navbar-expand-lg navbar-default">
             <div class="container-fluid">
                 <form class="d-flex" method="GET" action="search.php">
                     <a class="navbar-brand">Facebook</a>
@@ -44,13 +49,17 @@
             <div class="collapse navbar-collapse navbar-right">
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item">
-                        <a id="modalUser" class="nav-link" href="dados_usuario.php"><?php echo $name; ?></a>
+                        <a class="nav-link" style="color:red;" href="lista_solicitacoes.php"><?php echo $total; ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Sair</a>
+                        <a id="modalUser" class="nav-link" style="color:white;" href="dados_usuario.php"><?php echo $name; ?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white;" href="logout.php">Sair</a>
                     </li>
                 </ul>
             </div>
         </nav>
 
     </header>
+    

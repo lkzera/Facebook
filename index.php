@@ -28,16 +28,23 @@ include_once "layout_lateral.php";
     <div class="container-fluid posts-content" id="postagens">
 
     </div>
+
 </div>
 
 <script>
     $(document).ready(function() {
-        loadDataPosts();
+        loadDataPosts(null);
 
         // $(document).on('click', '.action-editar', function() {
         //     var id = $(this).closest('.dropdown-menu').data('id');
         //     console.log(id);
         // });
+
+        $(document).on('click', '.pagclick', function() {
+          var pag = $(this).text();
+          loadDataPosts(pag);
+        });
+
         $(document).on('click', '.action-excluir', function() {
             if (confirm("Deseja realmente deletar o post?")) {
                 $.ajax({
@@ -82,11 +89,16 @@ include_once "layout_lateral.php";
 
     });
 
-    function loadDataPosts() {
+    function loadDataPosts(pag) {
+        
+        if(pag === null){
+            pag = 1;
+        }
+
         $.ajax({
             type: 'GET',
             dataType: 'json',
-            url: 'lista_postagens.php',
+            url: 'lista_postagens.php?page=' + pag,
             async: true,
             success: function(response) {
                 $('#postagens').html(parsePosts(response));
@@ -99,8 +111,10 @@ include_once "layout_lateral.php";
 
     function parsePosts(posts) {
         let dados = '';
+        let pages = 0;
         var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
         for (let item in posts) {
+            pages = parseInt(posts[item].pages);
             dados += '<div class="row">';
             dados += '<div class="col-md-6 mx-auto">'
             dados += '<div class="card mb-4">'
@@ -172,7 +186,21 @@ include_once "layout_lateral.php";
             dados += '     </div>'
             dados += ' </div>'
         };
+        if (pages != 0) {
 
+
+            dados += '<nav aria-label="Page navigation example">'
+            dados += '        <ul class="pagination">'
+           
+
+            for (var i = 1; i <= pages; i++) {
+                dados += `            <li class="page-item"><a class="page-link pagclick" >${i}</a></li>`
+            }
+
+          
+            dados += '        </ul>'
+            dados += '</nav>'
+        }
         return dados;
     }
 </script>

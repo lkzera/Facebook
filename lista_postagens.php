@@ -11,4 +11,6 @@ $_postRepository = new PostRepository();
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-echo json_encode($_postRepository->findPostsFriends($_SESSION["id_usuario"]));
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+echo json_encode($_postRepository->findPostsFriends($_SESSION["id_usuario"], (($page - 1) * 5)));

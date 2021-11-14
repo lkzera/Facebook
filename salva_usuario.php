@@ -10,6 +10,10 @@ $senha = $_POST["senha"];
 $descricao = $_POST["descricao"];
 $aniversario = $_POST["aniversario"];
 
+$image = $_FILES['vaimage']['tmp_name'];
+$imageSize = $_FILES['vaimage']['size'];
+
+
 if (!is_null($id_usuario)) {
     $user = new UserRepository();
     $usuario = $user->findId($id_usuario);
@@ -25,7 +29,7 @@ if (!is_null($id_usuario)) {
         $params += ["email" => $email];
 
     if (strlen($senha) > 0 && $usuario->getSenha() !== md5($senha))
-        $params += ["senha" => $senha];
+        $params += ["senha" => md5($senha)];
 
     if ($usuario->getDataAniversario() !== $aniversario) {
         $aniversario = new DateTime($aniversario);
@@ -34,6 +38,11 @@ if (!is_null($id_usuario)) {
     }
     if ($usuario->getDescricao() !== $descricao)
         $params += ["descricao" => $descricao];
+
+    if ($image !== null && $imageSize > 0) {
+        $image = addslashes(file_get_contents($image));
+        $params += ["imagem_perfil" => $image];
+    }
 
     if (count($params) > 0) {
         $erro = !$user->update($params, $id_usuario);
@@ -45,7 +54,7 @@ if (!is_null($id_usuario)) {
             echo json_encode($response);
             exit;
         }
-    }   
+    }
     $response = ['error' => true, 'message' => 'Não foi possível alterar o usuário'];
     echo json_encode($response);
     exit;

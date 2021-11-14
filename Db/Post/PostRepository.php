@@ -133,15 +133,16 @@ class PostRepository implements IMysqlRepository
         }
     }
 
-    public function findPostsFriends($id){
-        //$query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario order by p.dataPostagem desc";
+    public function findPostsFriends($id, $page){
+        
         $query = "
     SELECT
         p.id_postagem,
         p.dataPostagem,
         p.texto,
         u.id_usuario,
-        u.nome
+        u.nome,
+        ceil(count(p.id_postagem) over() / 5) as pages
     FROM
         tb_postagem p
     INNER JOIN tb_usuarios u ON
@@ -161,9 +162,11 @@ class PostRepository implements IMysqlRepository
         FROM DUAL
         )
     ) order by dataPostagem desc
-    ";
+    limit 5 OFFSET ".$page;
+
         $stmt = $this->mysqlDB->prepare($query);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindValue(':id', $id);
+        //$stmt->bindValue(':page', $page);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
@@ -175,7 +178,8 @@ class PostRepository implements IMysqlRepository
                "dataPostagem" => $linha['dataPostagem'],
                "texto" => $linha['texto'],
                "id_usuario" => $linha['id_usuario'],
-               "nome_usuario" => $linha["nome"]
+               "nome_usuario" => $linha["nome"],
+               "pages" => $linha["pages"]
             ];
         }
 

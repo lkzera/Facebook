@@ -25,7 +25,7 @@ class UserRepository implements IMysqlRepository
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao']);
+        return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'], $row[0]['imagem_perfil']);
     }
 
     public function find($params)
@@ -45,7 +45,7 @@ class UserRepository implements IMysqlRepository
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
         if ($stmt->rowCount() > 0) {
-            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao']);
+            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'],$row[0]['imagem_perfil']);
         }
 
         return $result;
@@ -187,6 +187,26 @@ class UserRepository implements IMysqlRepository
         return $result;
     }
 
+    public function GetNumberSolPed($id){
+        $query = "SELECT
+        count(*) as total
+    FROM
+        tb_amizade a
+    INNER JOIN tb_usuarios u ON
+        u.id_usuario = a.usuario_id
+    WHERE
+        amigo_id = :id AND a.dataSolicitacao IS NOT NULL AND a.dataAceite IS NULL
+            ";
+            
+       // $query = "select * from tb_usuarios t where t.nome like :nome";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        $result = $row['total'];
+        return $result;
+    }
+
     public function AcceptInvite($id_origem, $id_destino){
         try {
             $query = "
@@ -287,5 +307,14 @@ class UserRepository implements IMysqlRepository
         } catch (Exception $th) {
             throw $th;
         }
+    }
+
+    public function getUserImagem($id){
+        $query = "select imagem_perfil from tb_usuarios where id_usuario = :id";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        return $row['imagem_perfil'];
     }
 }

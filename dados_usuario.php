@@ -14,7 +14,7 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 mx-auto">
-                <form id="dadosAlteraUsuario">
+                <form id="dadosAlteraUsuario" enctype='multipart/form-data'>
                     <div class="form-group">
                         <label for="inputDadosNome">Nome</label>
                         <input type="text" class="form-control" id="inputDadosNome" name="nome" value="<?php echo $usuario->getNome() ?>">
@@ -33,7 +33,7 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                     </div>
                     <div class="form-group">
                         <label for="descricao">Descrição</label>
-                        <textarea class="form-control" id="inputDadosdescricao" name="descricao" rows="3" ><?php echo $usuario->getDescricao()?></textarea>
+                        <textarea class="form-control" id="inputDadosdescricao" name="descricao" rows="3"><?php echo $usuario->getDescricao() ?></textarea>
                     </div>
 
                     <div class="form-group">
@@ -41,21 +41,21 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-outline">
-                                    <input type="number" id="inputDadosDia" class="form-control" name="dia" placeholder="Dia" value="<?php echo Date('d',strtotime($usuario->getDataAniversario())) ?>" />
+                                    <input type="number" id="inputDadosDia" class="form-control" name="dia" placeholder="Dia" value="<?php echo Date('d', strtotime($usuario->getDataAniversario())) ?>" />
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" id="inputDadosMes" class="form-control" name="mes" placeholder="Mês" value="<?php echo Date('m',strtotime($usuario->getDataAniversario())) ?>"/>
+                                <input type="number" id="inputDadosMes" class="form-control" name="mes" placeholder="Mês" value="<?php echo Date('m', strtotime($usuario->getDataAniversario())) ?>" />
                             </div>
                             <div class="col-md-3">
-                                <input type="number" id="inputDadosAno" class="form-control" name="ano" placeholder="Ano" value="<?php echo Date('Y',strtotime($usuario->getDataAniversario())) ?>" />
+                                <input type="number" id="inputDadosAno" class="form-control" name="ano" placeholder="Ano" value="<?php echo Date('Y', strtotime($usuario->getDataAniversario())) ?>" />
                             </div>
                         </div>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="inputDadosPhoto">Selecionar uma foto</label>
-                        <input type="file" class="form-control-file" id="inputDadosPhoto">
+                        <input type="file" class="form-control-file" id="inputDadosPhoto" name="image">
                     </div>
 
                     <br>
@@ -73,29 +73,36 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
 
 <script>
     $(document).ready(function() {
-        
-        $("#btnSalvar").on('click',function() {
+
+        $("#btnSalvar").on('click', function() {
             var id_usuario = <?php echo $_SESSION["id_usuario"] ?>;
             var nome = $('#inputDadosNome').val();
             var login = $('#inputDadosLogin').val();
             var email = $('#inputDadosEmail').val();
             var senha = $('#inputDadosSenha').val();
             var descricao = $('#inputDadosdescricao').val();
+            var vaimage = $('#inputDadosPhoto')[0].files[0];
             var dataA = $('#inputDadosAno').val() + '/' + $('#inputDadosMes').val() + '/' + $('#inputDadosDia').val();
+            var data = new FormData();
+            data.append('id_usuario', id_usuario);
+            data.append('nome', nome);
+            data.append('login', login);
+            data.append('email', email);
+            data.append('senha', senha);
+            data.append('descricao', descricao);
+            data.append('vaimage', vaimage);
+            data.append('aniversario', dataA);
+
+
             $.ajax({
                 type: 'POST',
+                processData: false,
+                contentType: false,
+                cache: false,
                 dataType: 'json',
                 url: 'salva_usuario.php',
-                async: true,
-                data: {
-                    id_usuario: id_usuario,
-                    nome: nome,
-                    login: login,
-                    email: email,
-                    senha: senha,
-                    descricao: descricao,
-                    aniversario: dataA
-                },
+                mimeType: 'multipart/form-data',
+                data: data,
                 success: function(response) {
                     alert(response.message);
                     window.location.replace("index.php");
@@ -126,8 +133,8 @@ $usuario = $user->findId($_SESSION["id_usuario"]);
             })
         });
 
-        $("#btnVoltar").on('click', function(){
-          window.location.replace("index.php");   
+        $("#btnVoltar").on('click', function() {
+            window.location.replace("index.php");
 
         });
 
