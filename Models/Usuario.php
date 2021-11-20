@@ -10,8 +10,9 @@
         private $descricao;
         private $dataAniversario;
         private $dataInclusao;
+        private $imagem;
 
-        public function __construct($id_usuario, $login, $nome, $email, $senha, $descricao, $dataAniversario, $dataInclusao)
+        public function __construct($id_usuario, $login, $nome, $email, $senha, $descricao, $dataAniversario, $dataInclusao, $imagem)
         {
                 $this->id_usuario = $id_usuario;
                 $this->login = $login;
@@ -21,6 +22,7 @@
                 $this->descricao = $descricao;
                 $this->dataAniversario = $dataAniversario;
                 $this->dataInclusao = $dataInclusao;
+                $this->imagem = $imagem;
         }
 
         /**
@@ -179,6 +181,26 @@
         public function setDataInclusao($dataInclusao)
         {
                 $this->dataInclusao = $dataInclusao;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of imagem
+         */ 
+        public function getImagem()
+        {
+                return $this->imagem;
+        }
+
+        /**
+         * Set the value of imagem
+         *
+         * @return  self
+         */ 
+        public function setImagem($imagem)
+        {
+                $this->imagem = $imagem;
 
                 return $this;
         }

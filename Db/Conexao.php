@@ -17,6 +17,10 @@
             return self::$instance;
         }
 
+        public function lastInsertId(){
+            return $this->instance->lastInsertId();
+        }
+
     }
 
 ?>

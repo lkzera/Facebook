@@ -10,7 +10,7 @@ try {
     $email = isset($_POST["email"]) ? addslashes(trim($_POST["email"])) : FALSE;
 
     $user = new UserRepository();
-    $usuario = new Usuario(null, $login, $nome, $email, $senha, 'teste', null, null);
+    $usuario = new Usuario(null, $login, $nome, $email, $senha, 'teste', null, null,null);
 
     $findUser = $user->find(["login" => $login, "email" => $email]);
     

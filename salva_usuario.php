@@ -10,9 +10,8 @@ $senha = $_POST["senha"];
 $descricao = $_POST["descricao"];
 $aniversario = $_POST["aniversario"];
 
-$image = $_FILES['vaimage']['tmp_name'];
-$imageSize = $_FILES['vaimage']['size'];
-
+$image = isset($_FILES['vaimage']['tmp_name']) ? $_FILES['vaimage']['tmp_name'] : null;
+$imageSize =  isset($_FILES['vaimage']['size']) ?  $_FILES['vaimage']['size'] : null;
 
 if (!is_null($id_usuario)) {
     $user = new UserRepository();
@@ -40,8 +39,12 @@ if (!is_null($id_usuario)) {
         $params += ["descricao" => $descricao];
 
     if ($image !== null && $imageSize > 0) {
-        $image = addslashes(file_get_contents($image));
-        $params += ["imagem_perfil" => $image];
+        $nome_real= explode(".",$_FILES["vaimage"]["name"])[0];
+        $ext = explode(".",$_FILES["vaimage"]["name"])[1];
+        $path = "./uploads/$nome_real"."_".strtotime(date("Y-m-d H:i:s")).".".$ext;
+        copy($image,$path);
+        $lastId = $user->setUserImage($nome_real, $path);
+        $params += ["imagem_id" => $lastId];
     }
 
     if (count($params) > 0) {

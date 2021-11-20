@@ -1,0 +1,8 @@
+truncate table tb_amizade;
+truncate table tb_comentarios;
+truncate table tb_imagem;
+truncate table tb_postagem;
+truncate table tb_reacao;
+truncate table tb_usuarios;
+truncate table tb_tipo_reacao;
+insert into tb_tipo_reacao(descricao, dataInclusao) VALUES ('CURTIR', SYSDATE());

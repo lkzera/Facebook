@@ -83,9 +83,11 @@ class PostRepository implements IMysqlRepository
         try {
             $query = "insert into tb_postagem(dataPostagem, texto, id_usuario) VALUES (sysdate(), :texto, :id_usuario)";
 
+            $texto =  $object->getTexto();
+            $id_usuario = $object->getId_usuario();
             $stmt = $this->mysqlDB->prepare($query);
-            $stmt->bindParam(':texto', $object->getTexto());
-            $stmt->bindParam(':id_usuario', $object->getId_usuario());
+            $stmt->bindParam(':texto',$texto);
+            $stmt->bindParam(':id_usuario', $id_usuario);
 
             $stmt->execute();
         } catch (Exception $th) {
@@ -142,11 +144,16 @@ class PostRepository implements IMysqlRepository
         p.texto,
         u.id_usuario,
         u.nome,
-        ceil(count(p.id_postagem) over() / 5) as pages
+        im.imagem as imagem_usuario,
+        ceil(count(p.id_postagem) over() / 5) as pages,
+        (select count(*) from tb_reacao r where r.postagem_id = p.id_postagem) as curtidas,
+        (select count(*) from tb_comentarios tc where tc.postagem_id = p.id_postagem) as comentarios,
+        (select count(*) from tb_reacao r where r.postagem_id = p.id_postagem and r.usuario_id = :id) as curtido
     FROM
         tb_postagem p
     INNER JOIN tb_usuarios u ON
         p.id_usuario = u.id_usuario
+    LEFT JOIN tb_imagem im on im.id_imagem = u.imagem_id
     WHERE
         p.id_usuario IN(
             (
@@ -179,10 +186,39 @@ class PostRepository implements IMysqlRepository
                "texto" => $linha['texto'],
                "id_usuario" => $linha['id_usuario'],
                "nome_usuario" => $linha["nome"],
-               "pages" => $linha["pages"]
+               "pages" => $linha["pages"],
+               "curtidas" => $linha["curtidas"],
+               "comentarios" => $linha["comentarios"],
+               "curtido" => $linha["curtido"],
+               "imagem_usuario" => $linha["imagem_usuario"]
             ];
         }
 
         return $result;
+    }
+
+    public function CurtirPost($usuario_id, $post_id){
+        try {
+            $query = "INSERT INTO tb_reacao (id_recao, usuario_id, postagem_id, dataInclusao, tipo_reacao_id) VALUES (NULL, :id_usuario, :id_post, current_timestamp(), '1')";
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_usuario',$usuario_id);
+            $stmt->bindParam(':id_post', $post_id);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
+
+    }
+
+    public function DescurtirPost($usuario_id, $post_id){
+        try {
+            $query = "delete from tb_reacao where usuario_id = :id_usuario and postagem_id = :id_post";
+            $stmt = $this->mysqlDB->prepare($query);
+            $stmt->bindParam(':id_usuario',$usuario_id);
+            $stmt->bindParam(':id_post', $post_id);
+            $stmt->execute();
+        } catch (Exception $th) {
+            throw $th;
+        }
     }
 }

@@ -41,8 +41,48 @@ include_once "layout_lateral.php";
         // });
 
         $(document).on('click', '.pagclick', function() {
-          var pag = $(this).text();
-          loadDataPosts(pag);
+            var pag = $(this).text();
+            loadDataPosts(pag);
+        });
+
+        $(document).on('click', '#DescurtirPostagem', function() {
+            var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'reacao.php',
+                data: {
+                    post_id: $(this).data('id'),
+                    id_usuario: id_usuario,
+                    tipo: 'D'
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        });
+
+        $(document).on('click', '#curtirPostagem', function() {
+            var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'reacao.php',
+                data: {
+                    post_id: $(this).data('id'),
+                    id_usuario: id_usuario,
+                    tipo: 'C'
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
         });
 
         $(document).on('click', '.action-excluir', function() {
@@ -90,8 +130,8 @@ include_once "layout_lateral.php";
     });
 
     function loadDataPosts(pag) {
-        
-        if(pag === null){
+
+        if (pag === null) {
             pag = 1;
         }
 
@@ -122,7 +162,7 @@ include_once "layout_lateral.php";
             dados += '                 <div class="media mb-3">'
             dados += '                      <div class="row">'
             dados += '                      <div class="col-md-8">'
-            dados += '                     <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="d-block ui-w-40 rounded-circle" alt="">'
+            dados += `                     <img src="${posts[item].imagem_usuario}" class="d-block ui-w-40 rounded-circle" alt="">`
             dados += '                      </div>'
             if (id_usuario == posts[item].id_usuario) {
                 // dados += '                      <div class="col-md-1">'
@@ -160,24 +200,28 @@ include_once "layout_lateral.php";
             dados += '             </div>'
             dados += '             <div class="card-footer">'
             dados += '                 <div class="row">'
-            dados += '                     <div class="col-md-4">'
-            dados += '                         <strong>123</strong> Curtidas</small>'
+            dados += `                     <div class="col-md-4">`
+            dados += `                         <strong>${posts[item].curtidas}</strong> Curtidas</small>`
             dados += '                     </div>'
             dados += '                     <div class="col-md-8">'
-            dados += '                         <strong>12</strong> Comentários</small>'
-            dados += '                         <strong>1</strong> Compartilhamentos</small>'
+            dados += `                         <strong>${posts[item].comentarios}</strong> Comentários</small>`
             dados += '                     </div>'
             dados += '                 </div>'
             dados += '                 <div class="row">'
             dados += '                     <div class="col-md-6 mx-auto">'
-            dados += '                         <a href="javascript:void(0)" class="d-inline-block text-muted">'
-            dados += '                             <strong>Curtir</strong>'
-            dados += '                         </a>'
+
+            if (posts[item].curtido == 0) {
+                dados += `                         <a id="curtirPostagem" href="#" class="d-inline-block text-muted" data-id="${posts[item].id_postagem}">`
+                dados += '                             <strong>Curtir</strong>'
+                dados += '                         </a>'
+            } else {
+                dados += `                         <a id="DescurtirPostagem" href="#" class="d-inline-block text-muted" data-id="${posts[item].id_postagem}">`
+                dados += '                             <strong>Descurtir</strong>'
+                dados += '                         </a>'
+            }
+
             dados += '                         <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">'
             dados += '                             <strong>Comentar</strong>'
-            dados += '                         </a>'
-            dados += '                         <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">'
-            dados += '                             <strong>Compartilhar</strong>'
             dados += '                         </a>'
             dados += '                     </div>'
             dados += '                 </div>'
@@ -191,13 +235,13 @@ include_once "layout_lateral.php";
 
             dados += '<nav aria-label="Page navigation example">'
             dados += '        <ul class="pagination">'
-           
+
 
             for (var i = 1; i <= pages; i++) {
                 dados += `            <li class="page-item"><a class="page-link pagclick" >${i}</a></li>`
             }
 
-          
+
             dados += '        </ul>'
             dados += '</nav>'
         }

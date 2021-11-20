@@ -20,17 +20,17 @@ class UserRepository implements IMysqlRepository
 
     public function findId($id)
     {
-        $query = "select * from tb_usuarios where id_usuario = :id";
+        $query = "select * from tb_usuarios u left join tb_imagem im on im.id_imagem = u.imagem_id  where u.id_usuario = :id";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'], $row[0]['imagem_perfil']);
+        return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'], $row[0]['imagem']);
     }
 
     public function find($params)
     {
-        $query = "select * from tb_usuarios where 1 = 1";
+        $query = "select * from tb_usuarios u left join tb_imagem im on im.id_imagem = u.imagem_id where 1 = 1";
         foreach ($params as $key => &$value) {
             $query = $query . ' and ' . $key . ' = :' . $key;
         }
@@ -45,7 +45,7 @@ class UserRepository implements IMysqlRepository
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
         if ($stmt->rowCount() > 0) {
-            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'],$row[0]['imagem_perfil']);
+            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'],$row[0]['imagem']);
         }
 
         return $result;
@@ -57,12 +57,18 @@ class UserRepository implements IMysqlRepository
         try {
             $query = "insert into tb_usuarios(nome, email, login, senha, descricao, dataAniversario, dataInclusao) VALUES (:nome, :email, :login, :senha, :descricao, sysdate(), sysdate())";
 
+            $nome = $object->getNome();
+            $email = $object->getEmail();
+            $login = $object->getLogin();
+            $senha = $object->getSenha();
+            $descricao = $object->getDescricao();
+
             $stmt = $this->mysqlDB->prepare($query);
-            $stmt->bindParam(':nome', $object->getNome());
-            $stmt->bindParam(':email', $object->getEmail());
-            $stmt->bindParam(':login', $object->getLogin());
-            $stmt->bindParam(':senha', $object->getSenha());
-            $stmt->bindParam(':descricao', $object->getDescricao());
+            $stmt->bindParam(':nome', $nome);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':login', $login);
+            $stmt->bindParam(':senha', $senha);
+            $stmt->bindParam(':descricao', $descricao);
 
             $stmt->execute();
         } catch (Exception $th) {
@@ -109,6 +115,7 @@ class UserRepository implements IMysqlRepository
         u.id_usuario,
         u.nome,
         u.descricao,
+        im.imagem,
             nvl((
             SELECT
                 1
@@ -131,6 +138,7 @@ class UserRepository implements IMysqlRepository
         
         FROM
             tb_usuarios u
+        LEFT JOIN tb_imagem im ON im.id_imagem = u.imagem_id
         WHERE
             u.id_usuario <> :id
             and u.nome like :nome
@@ -150,7 +158,8 @@ class UserRepository implements IMysqlRepository
                 "id_usuario" => $linha['id_usuario'],
                 "descricao" => $linha['descricao'],
                 "sol_pend" => $linha['sol_pend'],
-                "amigo" => $linha['amigo']
+                "amigo" => $linha['amigo'],
+                "imagem" => $linha['imagem']
             ];
         }
         return $result;
@@ -161,11 +170,13 @@ class UserRepository implements IMysqlRepository
         u.id_usuario,
         u.nome,
         u.descricao,
-        a.amigo_id
+        a.amigo_id,
+        im.imagem
     FROM
         tb_amizade a
     INNER JOIN tb_usuarios u ON
         u.id_usuario = a.usuario_id
+    LEFT JOIN tb_imagem im ON im.id_imagem = u.imagem_id
     WHERE
         amigo_id = :id AND a.dataSolicitacao IS NOT NULL AND a.dataAceite IS NULL
             ";
@@ -181,7 +192,8 @@ class UserRepository implements IMysqlRepository
                 "nome" => $linha['nome'],
                 "id_usuario" => $linha['id_usuario'],
                 "descricao" => $linha['descricao'],
-                "amigo_id" => $linha['amigo_id']
+                "amigo_id" => $linha['amigo_id'],
+                "imagem" => $linha['imagem']
             ];
         }
         return $result;
@@ -309,12 +321,23 @@ class UserRepository implements IMysqlRepository
         }
     }
 
-    public function getUserImagem($id){
-        $query = "select imagem_perfil from tb_usuarios where id_usuario = :id";
+    public function setUserImage($nome, $image){
+        $query = "insert into tb_imagem(titulo, imagem) VALUES (:titulo, :image)";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':titulo', $nome);
+        $stmt->bindParam(':image', $image);
+        $stmt->execute();
+        $custId = $this->mysqlDB->lastInsertId();
+        $stmt->closeCursor();
+        return $custId;
+    }
+
+    public function getUserImage($id){
+        $query = "select im.imagem from tb_usuarios u left join tb_imagem im on im.id_imagem = u.imagem_id  where u.id_usuario = :id";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-        $row = $stmt->fetch();
-        return $row['imagem_perfil'];
+        $linha = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $linha["imagem"];
     }
 }
