@@ -12,10 +12,12 @@ include_once "layout_lateral.php";
         <div class="row">
             <div class="col-md-offset-3 col-md-6 col-xs-12 mx-auto">
                 <div class="well well-sm well-social-post">
-                    <form>
+                    <form enctype='multipart/form-data'>
                         <textarea class="form-control" id="postText" placeholder="Diga o que está pensando.."></textarea>
                         <ul class='list-inline post-actions'>
-                            <li><a href="#"><span class="glyphicon glyphicon-camera">Foto</span></a></li>
+                            <li><label for="inputImagemPost">Selecionar uma foto</label>
+                                <input type="file" class="form-control-file" id="inputImagemPost" name="image">
+                            </li>
                             <button class="btn btn-primary" type="button" id="btnPostagem">Postar</button>
                         </ul>
                     </form>
@@ -127,15 +129,20 @@ include_once "layout_lateral.php";
 
         $("#btnPostagem").on('click', function() {
             var texto = $('#postText').val();
+            var img = $('#inputImagemPost')[0].files[0];
+            var data = new FormData();
+            data.append('post_text', texto);
+            data.append('img', img);
 
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
                 url: 'postar.php',
-                async: true,
-                data: {
-                    post_text: texto
-                },
+                processData: false,
+                contentType: false,
+                cache: false,
+                mimeType: 'multipart/form-data',
+                data: data,
                 success: function(response) {
                     location.reload();
                 },
@@ -214,7 +221,11 @@ include_once "layout_lateral.php";
             dados += '                 <p>'
             dados += `${posts[item].texto}`;
             dados += '                 </p>'
-            dados += `                 <a href="#" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>`
+            if (posts[item].post_img){
+               dados += `<hr class="solid">`; 
+               dados += `                 <a href="#" class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('${posts[item].post_img}');"></a>`
+            }
+           
             dados += '             </div>'
             dados += '             <div class="card-footer">'
             dados += '                 <div class="row">'
@@ -236,7 +247,7 @@ include_once "layout_lateral.php";
                 dados += `                         <a id="DescurtirPostagem" href="#" class="d-inline-block text-muted" data-id="${posts[item].id_postagem}">`
                 dados += '                             <strong>Descurtir</strong>'
                 dados += '                         </a>'
-            }     
+            }
             dados += `                         <a  href="lista_comentarios.php?id=${posts[item].id_postagem}" class="d-inline-block text-muted ml-3">`
             dados += '                             <strong>Comentar</strong>'
             dados += '                         </a>'

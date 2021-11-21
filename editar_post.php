@@ -55,7 +55,7 @@ if ($_SESSION["id_usuario"] !== $post->id_usuario) {
                             <div class="form-group">
                                 <textarea class="form-control" id="inputTexto" name="descricao" rows="3"><?php echo $post->texto; ?></textarea>
                             </div>
-                            <a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
+                            <a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('<?php echo $post->post_img; ?>'); margin-top:20px; border-style: groove;"></a>
                         </div>
                     </div>
                 </form>

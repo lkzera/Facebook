@@ -27,7 +27,7 @@ session_start();
 
 <div class="col-md-10">
 
-<button class="btn btn-secondary" type="button" id="btnVoltar">Voltar</button>
+    <button class="btn btn-secondary" type="button" id="btnVoltar">Voltar</button>
 
     <div class="container-fluid posts-content">
         <div class="row">
@@ -53,7 +53,7 @@ session_start();
                             <div class="form-group">
                                 <a name="descricao"><?php echo $post->texto; ?></a>
                             </div>
-                            <a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('https://bootdey.com/img/Content/avatar/avatar3.png');"></a>
+                            <a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('<?php echo $post->post_img; ?>');"></a>
                         </div>
                         <div class="card-footer">
                             <div class="input-group">
@@ -64,34 +64,9 @@ session_start();
                                     <button id="btnComentar" type="button" class="btn btn-success" style="margin-left: 20px;">Enviar</button>
                                 </div>
                             </div>
-                            <ul class="comments-list p-0 m-1">
-                                <?php
-                                $listaComentarios = $_postRepository->GetComentarios($post_id);
-                                foreach ($listaComentarios as $comentario) {
-                                    echo '<li class="list-group-item">';
-                                    echo '    <div class="row">';
-                                    echo '        <div class="col-md-2 p-0 m-0">';
-                                    echo '            <img src="' . $comentario->imagem . '" class="img-circle img-responsive img-user" alt="" />';
-                                    echo '        </div>';
-                                    echo '        <div class="col-md-10 p-0 m-0">';
-                                    echo '            <div class="row">';
-                                    echo '                <div class="col-md-8">';
-                                    echo '                <h6>' . $comentario->nome . '</h6>';
-                                    echo '                </div>';
-                                    echo '                <div class="col-md-4">';
-                                    echo '                <h6>' . $comentario->dataInclusao . '</h6>';
-                                    echo '                </div>';
-                                    echo '            </div>';
-                                    echo '            <div class="comment-text">';
-                                    echo                $comentario->texto;
-                                    echo '            </div>';
-                                    echo '        </div>';
-                                    echo '    </div>';
-                                    echo '</li>';
-                                }
-                                ?>
-                            </ul>
+                            <div id="listComentarios">
 
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -103,6 +78,8 @@ session_start();
 
 <script>
     $(document).ready(function() {
+        loadPost();
+
         $(document).on('click', '#btnComentar', function() {
             var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
             var post_id = <?php echo $post_id; ?>;
@@ -117,7 +94,20 @@ session_start();
                     texto: texto
                 },
                 success: function(response) {
-                    location.reload();
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'JSON',
+                        url: 'comentarios.php',
+                        data: {
+                            post_id: post_id
+                        },
+                        success: function(response) {
+                            $('#listComentarios').html(parseComentarios(response));
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    });
                 },
                 error: function(response) {
                     console.log(response);
@@ -126,9 +116,57 @@ session_start();
         });
 
         $("#btnVoltar").on('click', function() {
-                window.location.replace("index.php");
+            window.location.replace("index.php");
 
         });
+
+        function loadPost() {
+            var post_id = <?php echo $post_id; ?>;
+            $.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                url: 'comentarios.php',
+                data: {
+                    post_id: post_id
+                },
+                success: function(response) {
+                    $('#listComentarios').html(parseComentarios(response));
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function parseComentarios(comentarios) {
+            let dados = '';
+            dados += '<ul class="comments-list p-0 m-1">';
+            for (let coment in comentarios) {
+                dados += '<li class="list-group-item" style="margin-top:10px;">';
+                dados += '    <div class="row">';
+                dados += '        <div class="col-md-2 p-0 m-0">';
+                dados += `            <img src="${comentarios[coment].imagem}" class="img-circle img-responsive img-user" alt="" />`;
+                dados += '        </div>';
+                dados += '        <div class="col-md-10 p-0 m-0">';
+                dados += '            <div class="row">';
+                dados += '                <div class="col-md-8">';
+                dados += `                <h6>${comentarios[coment].nome}</h6>`;
+                dados += '                </div>';
+                dados += '                <div class="col-md-4">';
+                dados += `                <h6>${comentarios[coment].dataInclusao}</h6>`;
+                dados += '                </div>';
+                dados += '            </div>';
+                dados += '            <div class="comment-text">';
+                dados += comentarios[coment].texto;
+                dados += '            </div>';
+                dados += '        </div>';
+                dados += '    </div>';
+                dados += '</li>';
+
+            }
+            dados += '</ul>';
+            return dados;
+        }
 
     });
 </script>

@@ -38,7 +38,7 @@ class PostRepository implements IMysqlRepository
 
     public function findId($id)
     {
-        $query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome, im.imagem from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario left join tb_imagem im on im.id_imagem = u.imagem_id where p.id_postagem = :id";
+        $query = "select p.id_postagem,p.dataPostagem,p.texto,u.id_usuario, u.nome, im.imagem, (select im2.imagem from tb_imagem im2 where im2.id_imagem = p.id_imagem) as post_img from tb_postagem p inner join tb_usuarios u on p.id_usuario = u.id_usuario left join tb_imagem im on im.id_imagem = u.imagem_id where p.id_postagem = :id";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -50,7 +50,8 @@ class PostRepository implements IMysqlRepository
             "texto" => $row[0]['texto'],
             "id_usuario" => $row[0]['id_usuario'],
             "nome_usuario" => $row[0]["nome"],
-            "imagem" => $row[0]["imagem"]
+            "imagem" => $row[0]["imagem"],
+            "post_img" => $row[0]["post_img"]
         ];
     }
 
@@ -88,8 +89,10 @@ class PostRepository implements IMysqlRepository
             $stmt = $this->mysqlDB->prepare($query);
             $stmt->bindParam(':texto', $texto);
             $stmt->bindParam(':id_usuario', $id_usuario);
-
             $stmt->execute();
+            $custId = $this->mysqlDB->lastInsertId();
+            $stmt->closeCursor();
+            return $custId;
         } catch (Exception $th) {
             throw $th;
         }
@@ -146,6 +149,7 @@ class PostRepository implements IMysqlRepository
         u.id_usuario,
         u.nome,
         im.imagem as imagem_usuario,
+        (select im2.imagem from tb_imagem im2 where im2.id_imagem = p.id_imagem) as post_img,
         ceil(count(p.id_postagem) over() / 5) as pages,
         (select count(*) from tb_reacao r where r.postagem_id = p.id_postagem) as curtidas,
         (select count(*) from tb_comentarios tc where tc.postagem_id = p.id_postagem) as comentarios,
@@ -191,7 +195,8 @@ class PostRepository implements IMysqlRepository
                 "curtidas" => $linha["curtidas"],
                 "comentarios" => $linha["comentarios"],
                 "curtido" => $linha["curtido"],
-                "imagem_usuario" => $linha["imagem_usuario"]
+                "imagem_usuario" => $linha["imagem_usuario"],
+                "post_img" => $linha["post_img"]
             ];
         }
 
@@ -276,5 +281,15 @@ class PostRepository implements IMysqlRepository
         } catch (Exception $th) {
             throw $th;
         }
+    }
+    public function SetPostImage($nome, $image){
+        $query = "insert into tb_imagem(titulo, imagem) VALUES (:titulo, :image)";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':titulo', $nome);
+        $stmt->bindParam(':image', $image);
+        $stmt->execute();
+        $custId = $this->mysqlDB->lastInsertId();
+        $stmt->closeCursor();
+        return $custId;
     }
 }
