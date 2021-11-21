@@ -45,6 +45,24 @@ include_once "layout_lateral.php";
             loadDataPosts(pag);
         });
 
+        $(document).on('click', '#comentarPostagem', function() {
+            var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'lista_comentarios.php',
+                data: {
+                    post_id: $(this).data('id')
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+        });
+
         $(document).on('click', '#DescurtirPostagem', function() {
             var id_usuario = <?php echo $_SESSION["id_usuario"]; ?>;
             $.ajax({
@@ -218,9 +236,8 @@ include_once "layout_lateral.php";
                 dados += `                         <a id="DescurtirPostagem" href="#" class="d-inline-block text-muted" data-id="${posts[item].id_postagem}">`
                 dados += '                             <strong>Descurtir</strong>'
                 dados += '                         </a>'
-            }
-
-            dados += '                         <a href="javascript:void(0)" class="d-inline-block text-muted ml-3">'
+            }     
+            dados += `                         <a  href="lista_comentarios.php?id=${posts[item].id_postagem}" class="d-inline-block text-muted ml-3">`
             dados += '                             <strong>Comentar</strong>'
             dados += '                         </a>'
             dados += '                     </div>'
