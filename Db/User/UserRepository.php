@@ -45,7 +45,7 @@ class UserRepository implements IMysqlRepository
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
         if ($stmt->rowCount() > 0) {
-            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'],$row[0]['imagem']);
+            return new Usuario($row[0]['id_usuario'], $row[0]['login'], $row[0]['nome'], $row[0]['email'], $row[0]['senha'], $row[0]['descricao'], $row[0]['dataAniversario'], $row[0]['dataInclusao'], $row[0]['imagem']);
         }
 
         return $result;
@@ -110,7 +110,8 @@ class UserRepository implements IMysqlRepository
         }
     }
 
-    public function SearchUsers($name, $id){
+    public function SearchUsers($name, $id)
+    {
         $query = "SELECT
         u.id_usuario,
         u.nome,
@@ -143,8 +144,8 @@ class UserRepository implements IMysqlRepository
             u.id_usuario <> :id
             and u.nome like :nome
             ";
-            
-       // $query = "select * from tb_usuarios t where t.nome like :nome";
+
+        // $query = "select * from tb_usuarios t where t.nome like :nome";
         $stmt = $this->mysqlDB->prepare($query);
         $param = $name . "%";
         $stmt->bindParam(':nome', $param);
@@ -152,7 +153,7 @@ class UserRepository implements IMysqlRepository
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
-        foreach($row as $linha){
+        foreach ($row as $linha) {
             $result[] = (object)[
                 "nome" => $linha['nome'],
                 "id_usuario" => $linha['id_usuario'],
@@ -165,7 +166,8 @@ class UserRepository implements IMysqlRepository
         return $result;
     }
 
-    public function GetFriendsPend($id){
+    public function GetFriendsPend($id)
+    {
         $query = "SELECT
         u.id_usuario,
         u.nome,
@@ -180,14 +182,14 @@ class UserRepository implements IMysqlRepository
     WHERE
         amigo_id = :id AND a.dataSolicitacao IS NOT NULL AND a.dataAceite IS NULL
             ";
-            
-       // $query = "select * from tb_usuarios t where t.nome like :nome";
+
+        // $query = "select * from tb_usuarios t where t.nome like :nome";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $result = [];
-        foreach($row as $linha){
+        foreach ($row as $linha) {
             $result[] = (object)[
                 "nome" => $linha['nome'],
                 "id_usuario" => $linha['id_usuario'],
@@ -199,7 +201,8 @@ class UserRepository implements IMysqlRepository
         return $result;
     }
 
-    public function GetNumberSolPed($id){
+    public function GetNumberSolPed($id)
+    {
         $query = "SELECT
         count(*) as total
     FROM
@@ -209,8 +212,8 @@ class UserRepository implements IMysqlRepository
     WHERE
         amigo_id = :id AND a.dataSolicitacao IS NOT NULL AND a.dataAceite IS NULL
             ";
-            
-       // $query = "select * from tb_usuarios t where t.nome like :nome";
+
+        // $query = "select * from tb_usuarios t where t.nome like :nome";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -219,7 +222,8 @@ class UserRepository implements IMysqlRepository
         return $result;
     }
 
-    public function AcceptInvite($id_origem, $id_destino){
+    public function AcceptInvite($id_origem, $id_destino)
+    {
         try {
             $query = "
             INSERT INTO tb_amizade(
@@ -260,7 +264,8 @@ class UserRepository implements IMysqlRepository
             throw $th;
         }
     }
-    public function InviteUser($id_origem, $id_destino){
+    public function InviteUser($id_origem, $id_destino)
+    {
         try {
             $query = "
             INSERT INTO tb_amizade(
@@ -283,7 +288,8 @@ class UserRepository implements IMysqlRepository
         }
     }
 
-    public function UndoUser($id_origem, $id_destino){
+    public function UndoUser($id_origem, $id_destino)
+    {
         try {
             $query = "
             DELETE
@@ -321,7 +327,8 @@ class UserRepository implements IMysqlRepository
         }
     }
 
-    public function setUserImage($nome, $image){
+    public function setUserImage($nome, $image)
+    {
         $query = "insert into tb_imagem(titulo, imagem) VALUES (:titulo, :image)";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':titulo', $nome);
@@ -332,12 +339,96 @@ class UserRepository implements IMysqlRepository
         return $custId;
     }
 
-    public function getUserImage($id){
+    public function GetFriendsByID($id){
+        $query = "select u.nome from tb_amizades a inner join tb_usuarios u on u.id_usuario = a.amigo_id whera a.usuario_id = :id";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        foreach ($row as $linha) {
+            $result[] = (object)[
+                "nome" => $linha['nome']
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getUserImage($id)
+    {
         $query = "select im.imagem from tb_usuarios u left join tb_imagem im on im.id_imagem = u.imagem_id  where u.id_usuario = :id";
         $stmt = $this->mysqlDB->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $linha = $stmt->fetch(PDO::FETCH_ASSOC);
         return $linha["imagem"];
+    }
+
+   
+
+    public function SearchUserAndFriends($nome, $login, $email)
+    {
+        $query = "SELECT
+        *
+    FROM
+        tb_usuarios u
+    WHERE
+        (
+            :nome IS NULL OR u.nome LIKE :nome
+        ) AND(
+            :login IS NULL OR u.login LIKE :login
+        ) AND(
+            :email IS NULL OR u.email LIKE :email
+        )";
+
+        $stmt = $this->mysqlDB->prepare($query);
+        
+        if($nome){
+            $paramNome = "%".$nome."%";
+        }
+
+        if($login){
+            $paramlogin = "%".$login."%";
+        }
+        
+        if($email){
+            $paramemail = "%".$email."%";
+        }  
+
+        $stmt->bindParam(':nome', $paramNome);
+        $stmt->bindParam(':email', $paramlogin);
+        $stmt->bindParam(':login', $paramemail);
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        foreach ($row as $linha) {
+            $amigos = $this->GetFriends($linha["id_usuario"]);
+            $result[] = (object)[
+                "nome" => $linha['nome'],
+                "email" =>  $linha['email'],
+                "amigos" => $amigos
+            ];
+        }
+
+        return $result;
+    }
+
+    public function GetFriends($id){
+        $query = "select u.nome, a.dataSolicitacao, a.dataAceite from tb_amizade a inner join tb_usuarios u on u.id_usuario = a.amigo_id where a.usuario_id = :id";
+        $stmt = $this->mysqlDB->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = [];
+        foreach ($row as $linha) {
+            $result[] = (object)[
+                "nome" => $linha['nome'],
+                "dataSolicitacao" => $linha['dataSolicitacao'],
+                "dataAceite" => $linha['dataAceite']    
+            ];
+        }
+
+        return $result;
     }
 }
