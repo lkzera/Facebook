@@ -26,7 +26,12 @@ $users = $_userRepository->GetFriendsPend($_SESSION["id_usuario"]);
             echo '                <div class="nearby-user">';
             echo '                    <div class="row">';
             echo '                        <div class="col-md-2 col-sm-2">';
+           if ($user->imagem == null){
+            echo '                           <img src="./uploads/363639-200.png" alt="user" class="profile-photo-lg">';
+           }
+           else{
             echo '                           <img src="'.$user->imagem.'" alt="user" class="profile-photo-lg">';
+           }
             echo '                        </div>';
             echo '                        <div class="col-md-7 col-sm-7">';
             echo '                         <div id="idUsuarioIN" style="display:none;">';

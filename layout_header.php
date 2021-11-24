@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <title>Facebook</title>
     <link rel="stylesheet" href="./Assets/Css/header.css" type="text/css" />
-    <link rel="stylesheet"href="./Assets/Css/newPost.css" type="text/css" />
-    <link rel="stylesheet"href="./Assets/Css/listUsers.css" type="text/css" />
+    <link rel="stylesheet" href="./Assets/Css/newPost.css" type="text/css" />
+    <link rel="stylesheet" href="./Assets/Css/listUsers.css" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -49,7 +49,18 @@
             <div class="collapse navbar-collapse navbar-right">
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item">
-                        <a class="nav-link" style="color:red;" href="lista_solicitacoes.php"><?php echo $total; ?></a>
+                        <a class="nav-link" style="color:red;" href="lista_solicitacoes.php">
+                        <?php
+                            if($total > 0){
+                                echo '<img src="./uploads/notification.png" alt="" style="width:30px;height:30px;">';
+                            }
+                            else{
+                                echo '<img src="./uploads/bell.png" alt="" style="width:30px;height:30px;">';
+                            }
+                        ?>    
+                        
+                        
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a id="modalUser" class="nav-link" style="color:white;" href="dados_usuario.php"><?php echo $name; ?></a>
@@ -62,4 +73,3 @@
         </nav>
 
     </header>
-    

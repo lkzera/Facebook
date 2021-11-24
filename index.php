@@ -187,7 +187,13 @@ include_once "layout_lateral.php";
             dados += '                 <div class="media mb-3">'
             dados += '                      <div class="row">'
             dados += '                      <div class="col-md-8">'
-            dados += `                     <img src="${posts[item].imagem_usuario}" class="d-block ui-w-40 rounded-circle" alt="">`
+            if (posts[item].imagem_usuario){
+                dados += `                     <img src="${posts[item].imagem_usuario}" class="d-block ui-w-40 rounded-circle" alt="">`
+            }
+            else{
+                dados += `                     <img src="./uploads/363639-200.png" class="d-block ui-w-40 rounded-circle" alt="">`
+            }
+            
             dados += '                      </div>'
             if (id_usuario == posts[item].id_usuario) {
                 // dados += '                      <div class="col-md-1">'

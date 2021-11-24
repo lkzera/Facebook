@@ -37,9 +37,18 @@ session_start();
                         <div class="card-body">
                             <div class="media mb-3">
                                 <div class="row">
-                                    <div class="col-md-10">
-                                        <img src="<?php echo $post->imagem ?>" class="d-block ui-w-40 rounded-circle" alt="">
-                                    </div>
+                                    <?php if ($post->imagem) {
+                                        echo '<div class="col-md-10">';
+                                        echo '<img src="' . $post->imagem . '" class="d-block ui-w-40 rounded-circle" alt="">';
+                                        echo '</div>';
+                                    } else {
+                                        echo '<div class="col-md-10">';
+                                        echo '<img src="./uploads/363639-200.png" class="d-block ui-w-40 rounded-circle" alt="">';
+                                        echo '</div>';
+                                    }
+
+                                    ?>
+
                                 </div>
 
                                 <div class="media-body ml-3">
@@ -53,7 +62,11 @@ session_start();
                             <div class="form-group">
                                 <a name="descricao"><?php echo $post->texto; ?></a>
                             </div>
-                            <a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url('<?php echo $post->post_img; ?>');"></a>
+                            <?php if ($post->post_img) {
+                                echo '<a class="ui-rect ui-bg-cover ui-rect-image" style="background-image: url(' . $post->post_img . ');"></a>';
+                            }
+                            ?>
+
                         </div>
                         <div class="card-footer">
                             <div class="input-group">
@@ -145,7 +158,12 @@ session_start();
                 dados += '<li class="list-group-item" style="margin-top:10px;">';
                 dados += '    <div class="row">';
                 dados += '        <div class="col-md-2 p-0 m-0">';
-                dados += `            <img src="${comentarios[coment].imagem}" class="img-circle img-responsive img-user" alt="" />`;
+                if (comentarios[coment].imagem == null) {
+                    dados += `            <img src="./uploads/363639-200.png" class="img-circle img-responsive img-user" alt="" />`;
+                } else {
+
+                    dados += `            <img src="${comentarios[coment].imagem}" class="img-circle img-responsive img-user" alt="" />`;
+                }
                 dados += '        </div>';
                 dados += '        <div class="col-md-10 p-0 m-0">';
                 dados += '            <div class="row">';
